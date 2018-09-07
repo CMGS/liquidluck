@@ -8,10 +8,8 @@ import datetime
 
 
 def to_unicode(value):
-    if isinstance(value, unicode):
+    if isinstance(value, str):
         return value
-    if isinstance(value, basestring):
-        return value.decode('utf-8')
     if isinstance(value, int):
         return str(value)
     if isinstance(value, bytes):
@@ -92,7 +90,7 @@ class UnicodeDict(dict):
 def cjk_nowrap(text):
     start = u'\u4e00'
     end = u'\u9fff'
-    pattern = ur'([%s-%s]+?)' % (start, end)
+    pattern = u'([%s-%s]+?)' % (start, end)
     cjk = re.compile(pattern + r'(\n|\r\n|\r)' + pattern)
     text = cjk.sub(r'\1\3', text)
     return text
@@ -122,11 +120,16 @@ def to_datetime(value):
 
 
 def get_relative_base(path):
-    length = len(filter(lambda o: o, path.split(os.path.sep)))
+    length = len(list(filter(lambda o: o, path.split(os.path.sep))))
     if length > 1:
         return '/'.join(['..' for i in range(length - 1)])
     return '.'
 
+
+def execfile(path, g, l):
+    with open(path) as f:
+        code = compile(f.read(), path, 'exec')
+        exec(code, g, l)
 
 def parse_settings(path, filetype=None):
     if path.endswith('.py'):

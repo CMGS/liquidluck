@@ -16,7 +16,7 @@ from jinja2 import Environment, FileSystemLoader
 from jinja2 import contextfilter
 import liquidluck
 from liquidluck.utils import import_object, get_relative_base
-from liquidluck.utils import to_unicode, utf8
+from liquidluck.utils import to_unicode, utf8, execfile
 
 # blog settings
 from liquidluck.options import settings

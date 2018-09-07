@@ -41,11 +41,11 @@ class BaseReader(object):
 
     def support(self):
         _type = self.SUPPORT_TYPE
-        if isinstance(_type, basestring):
+        if isinstance(_type, str):
             return self.filepath.endswith('.' + _type)
         if isinstance(_type, list) or isinstance(_type, tuple):
             for _t in _type:
-                if isinstance(_t, basestring) and \
+                if isinstance(_t, str) and \
                    self.filepath.endswith('.' + _t):
                     return True
         return False

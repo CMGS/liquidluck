@@ -101,7 +101,7 @@ class LiquidRender(m.HtmlRenderer):
         text = cjk_nowrap(text)
         return '<p>%s</p>\n' % text
 
-    def block_code(self, text, lang):
+    def blockcode(self, text, lang):
         if not lang or lang == '+' or lang == '-':
             return '\n<pre><code>%s</code></pre>\n' % escape(text.strip())
 
