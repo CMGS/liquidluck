@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import re
-import os
-import shutil
 import datetime
+import os
+import re
+import shutil
 
 
 def to_unicode(value):
@@ -22,7 +22,7 @@ def utf8(value):
         return value
     if isinstance(value, int):
         return str(value)
-    assert isinstance(value, unicode)
+    assert isinstance(value, str)
     return value.encode('utf-8')
 
 
@@ -130,6 +130,7 @@ def execfile(path, g, l):
     with open(path) as f:
         code = compile(f.read(), path, 'exec')
         exec(code, g, l)
+
 
 def parse_settings(path, filetype=None):
     if path.endswith('.py'):

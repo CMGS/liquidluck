@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-import re
+import datetime
 import hashlib
 import logging
-import datetime
-from jinja2 import contextfunction, contextfilter
+import os
+import re
+
+from jinja2 import contextfilter, contextfunction
+
 from liquidluck.options import g, settings
-from liquidluck.utils import to_unicode, to_bytes, get_relative_base
+from liquidluck.utils import get_relative_base, to_bytes, to_unicode
 
 
 def xmldatetime(value):

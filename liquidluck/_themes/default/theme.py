@@ -8,12 +8,17 @@ author = {
     'website': 'http://lepture.com',
 }
 
-
 lang = 'en'
 
 navigation = [
-    {'title': 'Home', 'link': '/'},
-    {'title': 'About', 'link': '/about.html'},
+    {
+        'title': 'Home',
+        'link': '/'
+    },
+    {
+        'title': 'About',
+        'link': '/about.html'
+    },
 ]
 
 twitter = 'lepture'
@@ -22,7 +27,6 @@ disqus = None
 analytics = None
 
 allow_comment_on_secret_post = False
-
 
 #: key-value descriptions
 descriptions = {}

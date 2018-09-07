@@ -7,24 +7,21 @@ Writer, write your content to html.
 :license: BSD
 '''
 
-
-import os
-import re
 import datetime
 import logging
-from jinja2 import Environment, FileSystemLoader
-from jinja2 import contextfilter
+import os
+import re
+
+from jinja2 import Environment, FileSystemLoader, contextfilter
+
 import liquidluck
-from liquidluck.utils import import_object, get_relative_base
-from liquidluck.utils import to_unicode, utf8, execfile
-
-# blog settings
-from liquidluck.options import settings
-
+from liquidluck.filters import (content_url, feed_updated, static_url, tag_url,
+                                wiki_link, xmldatetime, year_url)
 # liquidluck settings
-from liquidluck.options import g
-from liquidluck.filters import xmldatetime, feed_updated, wiki_link
-from liquidluck.filters import content_url, tag_url, year_url, static_url
+# blog settings
+from liquidluck.options import g, settings
+from liquidluck.utils import (execfile, get_relative_base, import_object,
+                              to_unicode, utf8)
 
 
 class BaseWriter(object):
@@ -165,9 +162,8 @@ def load_jinja():
         loaders.append(theme_template)
 
     #: load default theme template always
-    default_template = os.path.join(
-        g.liquid_directory, '_themes/default/templates'
-    )
+    default_template = os.path.join(g.liquid_directory,
+                                    '_themes/default/templates')
     if default_template != theme_template:
         loaders.append(default_template)
 
@@ -183,7 +179,7 @@ def load_jinja():
     #: load template variables
     jinja.globals.update({
         'site': settings.site,
-        'template': settings.template.get("vars") or {},
+        'template': settings.template.get('vars') or {},
     })
 
     #: load theme variables
@@ -216,8 +212,10 @@ def load_jinja():
 
     #: function helpers
     jinja.globals.update({
-        'content_url': content_url,
-        'static_url': static_url(os.path.join(theme, 'static')),
+        'content_url':
+        content_url,
+        'static_url':
+        static_url(os.path.join(theme, 'static')),
     })
 
     #: load theme filters
@@ -229,7 +227,7 @@ def load_jinja():
     jinja.filters.update(config)
 
     #: load filters from settings
-    filters = settings.template.get("filters") or {}
+    filters = settings.template.get('filters') or {}
     for k, v in filters.items():
         jinja.filters.update({k: import_object(v)})
 
@@ -295,7 +293,7 @@ def get_post_destination(post, slug_format):
 @contextfilter
 def permalink(ctx, post, prepend_site=False):
     writer = ctx.get('writer')
-    slug = get_post_slug(post, settings.config["permalink"])
+    slug = get_post_slug(post, settings.config['permalink'])
 
     if prepend_site:
         url = '%s/%s' % (settings.site['url'].rstrip('/'), slug)

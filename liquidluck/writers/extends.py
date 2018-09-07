@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-
 """Extends of the core writers
 """
 
 import os
+
 from liquidluck.options import g, settings
-from liquidluck.writers.base import BaseWriter
-from liquidluck.writers.base import get_post_destination
+from liquidluck.writers.base import BaseWriter, get_post_destination
 
 
 class PostWriter(BaseWriter):
@@ -64,9 +63,10 @@ class PostWriter(BaseWriter):
                     p.related_priority = base - prior
                     yield p
 
-        related = sorted(get_related_by_tags(),
-                         key=lambda o: o.related_priority,
-                         reverse=True)
+        related = sorted(
+            get_related_by_tags(),
+            key=lambda o: o.related_priority,
+            reverse=True)
         relation = {
             'newer': newer,
             'older': older,

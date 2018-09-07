@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 import os
 import sys
+
 import liquidluck
-from liquidluck.tools import theme
-from liquidluck.tools import webhook
-from liquidluck.tools import server
-from liquidluck import generator
-from liquidluck.options import enable_pretty_logging
-from liquidluck.options import g, settings
 from docopt import docopt
+from liquidluck import generator
+from liquidluck.options import enable_pretty_logging, g, settings
+from liquidluck.tools import server, theme, webhook
 
 documentation = {}
 documentation['help'] = """Felix Felicis %(version)s
@@ -118,8 +116,7 @@ def main():
     else:
         args = docopt(
             documentation['help'],
-            version='Felix Felicis v%s' % liquidluck.__version__
-        )
+            version='Felix Felicis v%s' % liquidluck.__version__)
 
     arg_settings = args.get('--settings') or generator.find_settings()
     arg_verbose = args.get('--verbose')
@@ -142,10 +139,8 @@ def main():
     elif command == 'build':
         arg_output = args.get('--output')
         if not arg_settings:
-            answer = raw_input(
-                "Can't find your setting files, "
-                "would you like to create one?(Y/n) "
-            )
+            answer = input("Can't find your setting files, "
+                           'would you like to create one?(Y/n) ')
             if answer.lower() == 'n':
                 return
             generator.create_settings(arg_settings)
@@ -176,8 +171,9 @@ def main():
     elif command == 'install':
         theme.install(arg_theme, arg_global)
     elif command == 'webhook':
-        action = (args['start'] and 'start') or (args['stop'] and 'stop') \
-                or (args['restart'] and 'restart')
+        action = (args['start']
+                  and 'start') or (args['stop'] and 'stop') or (args['restart']
+                                                                and 'restart')
         webhook.webhook(arg_port, action, arg_settings)
 
 

@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
-import os
-import mimetypes
 import logging
+import mimetypes
+import os
 from wsgiref.simple_server import make_server
-from liquidluck.options import g, settings
-from liquidluck.utils import to_unicode, UnicodeDict, walk_dir
+
 from liquidluck.generator import load_posts, write_posts
+from liquidluck.options import g, settings
+from liquidluck.utils import UnicodeDict, to_unicode, walk_dir
+
 try:
     import tornado.web
     import tornado.escape
@@ -20,14 +22,12 @@ except ImportError:
     RequestHandler = object
     WebSocketHandler = object
 
-
 HOST = '127.0.0.1'
 PORT = 8000
 ROOT = os.path.abspath('.')
 PERMALINK = 'html'
 LIVERELOAD = os.path.join(
-    os.path.abspath(os.path.dirname(__file__)), 'livereload.js'
-)
+    os.path.abspath(os.path.dirname(__file__)), 'livereload.js')
 
 
 def config(port=None, root=None, permalink=None):
@@ -137,7 +137,7 @@ class LiveReloadHandler(WebSocketHandler):
 
         try:
             self.write_message(message)
-        except:
+        except Exception as e:
             logging.error('Error sending message', exc_info=True)
 
     def on_message(self, message):
@@ -155,8 +155,7 @@ class LiveReloadHandler(WebSocketHandler):
             handshake['command'] = 'hello'
             protocols = message.protocols
             protocols.append(
-                'http://livereload.com/protocols/2.x-remote-control'
-            )
+                'http://livereload.com/protocols/2.x-remote-control')
             handshake['protocols'] = protocols
             handshake['serverName'] = 'livereload-tornado'
             self.send_message(handshake)
@@ -194,15 +193,11 @@ class LiveReloadHandler(WebSocketHandler):
 
     def reload_browser(self):
         logging.info('Reload')
-        msg = {
-            'command': 'reload',
-            'path': '*',
-            'liveCSS': True
-        }
+        msg = {'command': 'reload', 'path': '*', 'liveCSS': True}
         for waiter in LiveReloadHandler.waiters:
             try:
                 waiter.write_message(msg)
-            except:
+            except Exception as e:
                 logging.error('Error sending message', exc_info=True)
                 LiveReloadHandler.waiters.remove(waiter)
 
@@ -260,12 +255,11 @@ class IndexHandler(RequestHandler):
             self.set_status(404)
             self.write(body or 'Not Found')
             return
-        ua = self.request.headers.get("User-Agent", 'bot').lower()
+        ua = self.request.headers.get('User-Agent', 'bot').lower()
         try:
             if 'msie' not in ua:
                 body = body.replace(
-                    '</head>', '<script src="/livereload.js"></script></head>'
-                )
+                    '</head>', '<script src="/livereload.js"></script></head>')
             # disable google analytics
             body = body.replace('google-analytics.com/ga.js', '')
         except Exception as e:

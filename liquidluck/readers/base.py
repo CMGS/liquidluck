@@ -7,12 +7,13 @@ Reader, read content, parse to html.
 :license: BSD
 '''
 
-import os
-import logging
 import datetime
+import logging
+import os
 import re
-from liquidluck.options import settings, g
-from liquidluck.utils import to_datetime, import_object
+
+from liquidluck.options import g, settings
+from liquidluck.utils import import_object, to_datetime
 
 
 class BaseReader(object):
@@ -29,6 +30,7 @@ class BaseReader(object):
     New reader optional:
         - ``start``
     """
+
     def __init__(self, filepath=None):
         self.filepath = filepath
 
@@ -90,9 +92,7 @@ class Post(object):
     @property
     def clean_title(self):
         #: https://github.com/avelino/liquidluck/issues/32
-        title = re.sub(
-            r'[<>,~!#&\{\}\(\)\[\]\.\*\^\$\?]', ' ', self.title
-        )
+        title = re.sub(r'[<>,~!#&\{\}\(\)\[\]\.\*\^\$\?]', ' ', self.title)
         return '-'.join(title.strip().split())
 
     @property
@@ -124,7 +124,7 @@ class Post(object):
             return []
         if isinstance(tags, (list, tuple)):
             return tags
-        return [tag.strip() for tag in tags.split(",")]
+        return [tag.strip() for tag in tags.split(',')]
 
     @property
     def template(self):
@@ -150,24 +150,20 @@ class Post(object):
 
     @property
     def clean_filepath(self):
-        logging.warn(
-            'clean_filepath is deprecated since 3.6, '
-            'you should use relative_filepath instead.'
-        )
+        logging.warn('clean_filepath is deprecated since 3.6, '
+                     'you should use relative_filepath instead.')
         return self.relative_filepath
 
     @property
     def clean_folder(self):
-        logging.warn(
-            'clean_folder is deprecated since 3.6, '
-            'you should use folder instead.'
-        )
+        logging.warn('clean_folder is deprecated since 3.6, '
+                     'you should use folder instead.')
         return self.folder
 
     def __getattr__(self, key):
         try:
             return super(Post, self).__getattr__(key)
-        except:
+        except Exception:
             pass
         #: won't raise AttributeError
         return self.meta.get(key)

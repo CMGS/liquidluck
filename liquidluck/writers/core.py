@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
-import os
 import logging
+import os
+
 from liquidluck.options import g, settings
-from liquidluck.utils import UnicodeDict, walk_dir, copy_to
-from liquidluck.writers.base import BaseWriter, Pagination
-from liquidluck.writers.base import get_post_destination
+from liquidluck.utils import UnicodeDict, copy_to, walk_dir
+from liquidluck.writers.base import (BaseWriter, Pagination,
+                                     get_post_destination)
 
 
 class PostWriter(BaseWriter):
@@ -35,10 +36,10 @@ class PageWriter(BaseWriter):
         self._template = self.get('page_template', 'page.html')
 
     def start(self):
-        l = len(g.source_directory) + 1
+        lt = len(g.source_directory) + 1
         for post in g.pure_pages:
             template = post.template or self._template
-            filename = os.path.splitext(post.filepath[l:])[0] + '.html'
+            filename = os.path.splitext(post.filepath[lt:])[0] + '.html'
             dest = os.path.join(g.output_directory, filename)
             self.render({'post': post}, template, dest)
 
@@ -48,8 +49,8 @@ class ArchiveWriter(BaseWriter):
 
     def __init__(self):
         self._template = self.get('archive_template', 'archive.html')
-        self._output = self.get(
-            'archive_output', self.prefix_dest('index.html'))
+        self._output = self.get('archive_output',
+                                self.prefix_dest('index.html'))
         self._title = self.get('archive_title', 'Archive')
 
     def start(self):
@@ -69,11 +70,8 @@ class ArchiveWriter(BaseWriter):
             pagination.root = self.prefix_dest('')
             dest = os.path.join(g.output_directory, 'page/%s.html' % page)
             if pagination.root:
-                dest = os.path.join(
-                    g.output_directory,
-                    pagination.root,
-                    'page/%s.html' % page
-                )
+                dest = os.path.join(g.output_directory, pagination.root,
+                                    'page/%s.html' % page)
             self.render({'pagination': pagination}, self._template, dest)
 
     def prefix_dest(self, dest):
@@ -92,9 +90,8 @@ class ArchiveFeedWriter(ArchiveWriter):
 
     def __init__(self):
         self._template = self.get('archive_feed_template', 'feed.xml')
-        self._output = self.get(
-            'archive_feed_output', self.prefix_dest('feed.xml')
-        )
+        self._output = self.get('archive_feed_output',
+                                self.prefix_dest('feed.xml'))
 
     def start(self):
         feed = UnicodeDict()
@@ -113,9 +110,9 @@ class FileWriter(BaseWriter):
         g.resource['files'] = g.pure_files
 
     def start(self):
-        l = len(g.source_directory) + 1
+        lt = len(g.source_directory) + 1
         for f in g.pure_files:
-            path = f[l:]
+            path = f[lt:]
             logging.debug('copy %s' % path)
             dest = os.path.join(g.output_directory, path)
             copy_to(f, dest)
@@ -124,9 +121,9 @@ class FileWriter(BaseWriter):
 class StaticWriter(BaseWriter):
     def start(self):
         static_path = os.path.join(g.theme_directory, 'static')
-        l = len(static_path) + 1
+        lt = len(static_path) + 1
         for f in walk_dir(static_path):
-            path = f[l:]
+            path = f[lt:]
             logging.debug('copy %s' % path)
             dest = os.path.join(g.static_directory, path)
             copy_to(f, dest)
@@ -168,11 +165,8 @@ class YearWriter(ArchiveWriter):
             pagination.title = year
             pagination.root = self.prefix_dest(year)
 
-            dest = os.path.join(
-                g.output_directory,
-                pagination.root,
-                'page/%s.html' % page
-            )
+            dest = os.path.join(g.output_directory, pagination.root,
+                                'page/%s.html' % page)
             self.render({'pagination': pagination}, self._template, dest)
 
 
@@ -213,9 +207,8 @@ class TagWriter(ArchiveWriter):
             pagination.title = tag
             pagination.root = self.prefix_dest('tag/%s' % tag)
 
-            dest = os.path.join(
-                g.output_directory, pagination.root, 'page/%s.html' % page
-            )
+            dest = os.path.join(g.output_directory, pagination.root,
+                                'page/%s.html' % page)
             self.render({'pagination': pagination}, self._template, dest)
 
 
@@ -239,9 +232,8 @@ class TagCloudWriter(ArchiveWriter):
         g.resource['tag'] = self._posts
 
     def start(self):
-        dest = os.path.join(
-            g.output_directory, self.prefix_dest('tag/index.html')
-        )
+        dest = os.path.join(g.output_directory,
+                            self.prefix_dest('tag/index.html'))
         self.render({'tags': self._posts}, self._template, dest)
 
 
@@ -283,9 +275,8 @@ class CategoryWriter(ArchiveWriter):
             pagination.title = self._title.get(category, category)
             pagination.root = self.prefix_dest(category)
 
-            dest = os.path.join(
-                g.output_directory, pagination.root, 'page/%s.html' % page
-            )
+            dest = os.path.join(g.output_directory, pagination.root,
+                                'page/%s.html' % page)
             self.render({'pagination': pagination}, self._template, dest)
 
 

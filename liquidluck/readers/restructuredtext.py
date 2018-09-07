@@ -27,14 +27,16 @@ Syntax::
 
 import logging
 from xml.dom import minidom
+
 from docutils import nodes
 from docutils.core import publish_parts
-from docutils.parsers.rst import directives, Directive
-from pygments.formatters import HtmlFormatter
+from docutils.parsers.rst import Directive, directives
 from pygments import highlight
-from pygments.lexers import get_lexer_by_name, TextLexer
-from liquidluck.readers.base import BaseReader
+from pygments.formatters import HtmlFormatter
+from pygments.lexers import TextLexer, get_lexer_by_name
+
 from liquidluck.options import settings
+from liquidluck.readers.base import BaseReader
 from liquidluck.utils import to_unicode, utf8
 
 
@@ -50,7 +52,8 @@ class RestructuredTextReader(BaseReader):
         f.close()
 
         parts = publish_parts(
-            content, writer_name='html',
+            content,
+            writer_name='html',
             settings_overrides=self.extra_setting,
         )
         title = parts['title']
@@ -133,6 +136,7 @@ class Pygments(Directive):
                 or DEFAULT
         parsed = highlight('\n'.join(self.content), lexer, formatter)
         return [nodes.raw('', parsed, format='html')]
+
 
 directives.register_directive('sourcecode', Pygments)
 directives.register_directive('code-block', Pygments)

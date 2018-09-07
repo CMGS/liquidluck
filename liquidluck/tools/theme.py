@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 from liquidluck.options import g
 from liquidluck.utils import to_unicode, utf8
 
@@ -15,7 +16,7 @@ def __fetch_themes():
         urlopen = urllib.request.urlopen
 
     content = urlopen(
-        "https://api.github.com/legacy/repos/search/%22liquidluck-theme-%22"
+        'https://api.github.com/legacy/repos/search/%22liquidluck-theme-%22'
     ).read()
     content = to_unicode(content)
     return content
@@ -32,7 +33,7 @@ def __filter_themes(content):
     repos = json_decode(content)
     themes = {}
     if 'repositories' not in repos and 'message' in repos:
-        print repos['message']
+        print(repos['message'])
         return {}
     for theme in repos['repositories']:
         fork = theme['fork']
@@ -53,7 +54,7 @@ def __load_themes(force=False):
        os.stat(path).st_mtime + 600 < time.time() or \
        force:
         content = __fetch_themes()
-        if "repositories" not in content:
+        if 'repositories' not in content:
             return content
         f = open(path, 'w')
         f.write(utf8(content))
@@ -93,7 +94,7 @@ def search(keyword=None, clean=False, force=False):
 
 def install(keyword=None, widely=False):
     if not keyword:
-        print("You need specify a theme")
+        print('You need specify a theme')
         return
     if '/' in keyword:
         user, name = keyword.split('/')
@@ -113,8 +114,7 @@ def install(keyword=None, widely=False):
             print("can't find theme %s" % keyword)
             return
         theme = themes[keyword]
-        repo = 'https://github.com/%(username)s/liquidluck-theme-%(name)s' \
-                % theme
+        repo = 'https://github.com/%(username)s/liquidluck-theme-%(name)s' % theme
     if widely:
         output = os.path.join(g.theme_gallery, keyword)
     else:

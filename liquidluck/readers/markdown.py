@@ -28,18 +28,17 @@ Syntax::
 :license: BSD
 '''
 
-
-import re
 import logging
-import misaka as m
+import re
 
+import misaka as m
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
 
-from liquidluck.readers.base import BaseReader
 from liquidluck.options import settings
-from liquidluck.utils import to_unicode, cjk_nowrap, import_object
+from liquidluck.readers.base import BaseReader
+from liquidluck.utils import cjk_nowrap, import_object, to_unicode
 
 
 class MarkdownReader(BaseReader):
@@ -139,12 +138,11 @@ class LiquidRender(m.HtmlRenderer):
             return '<a href="mailto:%(link)s">%(link)s</a>' % {'link': link}
 
         variables = settings.reader.get('vars') or {}
-        for func in variables.get(
-            'markdown_transform', [
+        for func in variables.get('markdown_transform', [
                 'liquidluck.readers.markdown.transform_youtube',
                 'liquidluck.readers.markdown.transform_gist',
                 'liquidluck.readers.markdown.transform_vimeo',
-            ]):
+        ]):
             func = import_object(func)
             value = func(link)
             if value:
@@ -167,10 +165,8 @@ def markdown(text):
     render = LiquidRender(flags=m.HTML_USE_XHTML, nesting_level=6)
     md = m.Markdown(
         render,
-        extensions=(
-            m.EXT_FENCED_CODE | m.EXT_AUTOLINK | m.EXT_TABLES |
-            m.EXT_NO_INTRA_EMPHASIS | m.EXT_STRIKETHROUGH
-        ),
+        extensions=(m.EXT_FENCED_CODE | m.EXT_AUTOLINK | m.EXT_TABLES
+                    | m.EXT_NO_INTRA_EMPHASIS | m.EXT_STRIKETHROUGH),
     )
     return m.smartypants(md(text))
 
@@ -181,13 +177,14 @@ _XHTML_ESCAPE_DICT = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}
 
 def escape(value):
     """Escapes a string so it is valid within XML or XHTML."""
-    if not isinstance(value, (basestring, type(None))):
+    if not isinstance(value, (str, type(None))):
         value = value.decode('utf-8')
     return _XHTML_ESCAPE_RE.sub(
         lambda match: _XHTML_ESCAPE_DICT[match.group(0)], value)
 
 
 #: markdown autolink transform
+
 
 def transform_youtube(link):
     #: youtube.com
@@ -202,8 +199,11 @@ def transform_youtube(link):
                  '"http://www.youtube.com/embed/%(id)s" '
                  'frameborder="0" allowfullscreen></iframe>'
                  '<div><a rel="nofollow" href="%(link)s">'
-                 '%(title)s</a></div>'
-                ) % {'id': match.group(1), 'link': link, 'title': title}
+                 '%(title)s</a></div>') % {
+                     'id': match.group(1),
+                     'link': link,
+                     'title': title
+                 }
         return value
     return None
 
@@ -216,8 +216,10 @@ def transform_gist(link):
     if match:
         value = ('<script src="%(link)s.js"></script>'
                  '<div><a rel="nofollow" href="%(link)s">'
-                 '%(title)s</a></div>'
-                ) % {'link': match.group(1), 'title': title}
+                 '%(title)s</a></div>') % {
+                     'link': match.group(1),
+                     'title': title
+                 }
         return value
     return None
 
@@ -232,8 +234,11 @@ def transform_vimeo(link):
                  'src="http://player.vimeo.com/video/%(id)s" '
                  'allowFullScreen></iframe>'
                  '<div><a rel="nofollow" href="%(link)s">'
-                 '%(title)s</a></div>'
-                ) % {'id': match.group(1), 'link': link, 'title': title}
+                 '%(title)s</a></div>') % {
+                     'id': match.group(1),
+                     'link': link,
+                     'title': title
+                 }
         return value
     return None
 
@@ -247,7 +252,10 @@ def transform_screenr(link):
                  'src="http://www.screenr.com/embed/%(id)s" '
                  'allowFullScreen></iframe>'
                  '<div><a rel="nofollow" href="%(link)s">'
-                 '%(title)s</a></div>'
-                ) % {'id': match.group(1), 'link': link, 'title': title}
+                 '%(title)s</a></div>') % {
+                     'id': match.group(1),
+                     'link': link,
+                     'title': title
+                 }
         return value
     return None

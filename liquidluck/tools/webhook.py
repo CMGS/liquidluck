@@ -1,11 +1,10 @@
-import sys
-import os
-import time
 import atexit
+import os
 import subprocess
+import sys
+import time
 from signal import SIGTERM
 from wsgiref.simple_server import make_server
-
 
 CWDPATH = os.path.abspath('.')
 SETTINGS = 'settings.py'
@@ -44,8 +43,12 @@ class Daemon(object):
 
     Usage: subclass the Daemon class and override the run() method
     """
-    def __init__(self, pidfile, stdin='/dev/null',
-                 stdout='/dev/null', stderr='/dev/null'):
+
+    def __init__(self,
+                 pidfile,
+                 stdin='/dev/null',
+                 stdout='/dev/null',
+                 stderr='/dev/null'):
         self.stdin = stdin
         self.stdout = stdout
         self.stderr = stderr
@@ -64,12 +67,11 @@ class Daemon(object):
                 sys.exit(0)
         except OSError as e:
             sys.stderr.write(
-                "fork #1 failed: %d (%s)\n" % (e.errno, e.strerror)
-            )
+                'fork #1 failed: %d (%s)\n' % (e.errno, e.strerror))
             sys.exit(1)
 
         # decouple from parent environment
-        os.chdir("/")
+        os.chdir('/')
         os.setsid()
         os.umask(0)
 
@@ -81,7 +83,7 @@ class Daemon(object):
                 sys.exit(0)
         except OSError as e:
             sys.stderr.write(
-                "fork #2 failed: %d (%s)\n" % (e.errno, e.strerror))
+                'fork #2 failed: %d (%s)\n' % (e.errno, e.strerror))
             sys.exit(1)
 
         # redirect standard file descriptors
@@ -97,7 +99,7 @@ class Daemon(object):
         # write pidfile
         atexit.register(self.delpid)
         pid = str(os.getpid())
-        file(self.pidfile, 'w+').write("%s\n" % pid)
+        file(self.pidfile, 'w+').write('%s\n' % pid)
 
     def delpid(self):
         os.remove(self.pidfile)
@@ -115,7 +117,7 @@ class Daemon(object):
             pid = None
 
         if pid and self.check_pid_exists(pid):
-            message = "pidfile %s already exist. Daemon already running?\n"
+            message = 'pidfile %s already exist. Daemon already running?\n'
             sys.stderr.write(message % self.pidfile)
             sys.exit(1)
 
@@ -136,7 +138,7 @@ class Daemon(object):
             pid = None
 
         if not pid:
-            message = "pidfile %s does not exist. Daemon not running?\n"
+            message = 'pidfile %s does not exist. Daemon not running?\n'
             sys.stderr.write(message % self.pidfile)
             return  # not an error in a restart
 
@@ -145,9 +147,9 @@ class Daemon(object):
             while 1:
                 os.kill(pid, SIGTERM)
                 time.sleep(0.1)
-        except OSError, err:
+        except OSError as err:
             err = str(err)
-            if err.find("No such process") > 0:
+            if err.find('No such process') > 0:
                 if os.path.exists(self.pidfile):
                     os.remove(self.pidfile)
                 else:
@@ -201,4 +203,4 @@ def webhook(port, command='start', settings='settings.py'):
     elif command == 'restart':
         d.restart()
     else:
-        print("Invalid Command")
+        print('Invalid Command')

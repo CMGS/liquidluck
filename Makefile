@@ -26,5 +26,14 @@ docs:
 install: clean-build clean-pyc
 	python setup.py install
 
-testing: clean-build
+test: clean-build
 	nosetests -v
+
+format:
+	unify --in-place `find liquidluck -type f -name '*.py' | grep -v __pycache__ | grep -v pb2`
+	yapf -i `find liquidluck -type f -name '*.py' | grep -v __pycache__ | grep -v pb2`
+	isort -rc `find liquidluck -type f -name '*.py' | grep -v __pycache__ | grep -v pb2`
+
+check:
+	flake8 --exclude=rpc --ignore E501,F403,F401 liquidluck
+

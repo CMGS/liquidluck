@@ -120,11 +120,10 @@ Compatibility
 
 + Python:
 
-  - 2.6
-  - 2.7
-  - 3.3
   - 3.4
   - 3.5
+  - 3.6
+  - 3.7
 
 
 .. _restructedText: http://docutils.sourceforge.net/rst.html

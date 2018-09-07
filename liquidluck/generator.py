@@ -1,20 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-PROJDIR = os.path.abspath(os.path.dirname(__file__))
-import sys
 import logging
+import os
+import sys
+
 from liquidluck.options import g, settings
-from liquidluck.utils import import_object, walk_dir, parse_settings
-from liquidluck.writers.base import load_jinja, find_theme
+from liquidluck.utils import import_object, parse_settings, walk_dir
+from liquidluck.writers.base import find_theme, load_jinja
+
+PROJDIR = os.path.abspath(os.path.dirname(__file__))
 
 
 def create_settings(filepath):
     if not filepath:
-        filetype = raw_input(
-            'Select a config format ([yaml], python, json):  '
-        ) or 'yaml'
+        filetype = input(
+            'Select a config format ([yaml], python, json):  ') or 'yaml'
 
         if filetype not in ['yaml', 'python', 'json']:
             print('format not supported')
@@ -23,8 +24,8 @@ def create_settings(filepath):
         suffix = {'yaml': '.yml', 'python': '.py', 'json': '.json'}
         filepath = 'settings%s' % suffix[filetype]
 
-    content = raw_input('posts folder (content): ') or 'content'
-    output = raw_input('output folder (deploy): ') or 'deploy'
+    content = input('posts folder (content): ') or 'content'
+    output = input('output folder (deploy): ') or 'deploy'
     if filepath.endswith('.py'):
         f = open(os.path.join(PROJDIR, 'tools', '_settings.py'))
         text = f.read()
@@ -52,7 +53,10 @@ def find_settings(directory=None):
         directory = os.getcwd()
 
     config = [
-        'settings.yml', 'settings.json', 'settings.yaml', 'settings.py',
+        'settings.yml',
+        'settings.json',
+        'settings.yaml',
+        'settings.py',
     ]
 
     for f in config:

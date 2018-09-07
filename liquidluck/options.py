@@ -1,11 +1,10 @@
 from __future__ import absolute_import, division, with_statement
 
-import os
 import logging
 import logging.handlers
+import os
 import sys
 import time
-
 
 # For pretty log messages, if available
 try:
@@ -47,7 +46,7 @@ def enable_pretty_logging(level='info'):
         if curses and sys.stderr.isatty():
             try:
                 curses.setupterm()
-                if curses.tigetnum("colors") > 0:
+                if curses.tigetnum('colors') > 0:
                     color = True
             except Exception:
                 pass
@@ -65,44 +64,52 @@ class _LogFormatter(logging.Formatter):
             # python3.  Until version 3.2.3, most methods return
             # bytes, but only accept strings.  In addition, we want to
             # output these strings with the logging module, which
-            # works with unicode strings.  The explicit calls to
-            # unicode() below are harmless in python2 but will do the
+            # works with str strings.  The explicit calls to
+            # str() below are harmless in python2 but will do the
             # right conversion in python 3.
-            fg_color = (curses.tigetstr("setaf") or
-                        curses.tigetstr("setf") or "")
+            fg_color = (curses.tigetstr('setaf') or curses.tigetstr('setf')
+                        or '')
             if (3, 0) < sys.version_info < (3, 2, 3):
-                fg_color = unicode(fg_color, "ascii")
+                fg_color = str(fg_color, 'ascii')
             self._colors = {
-                logging.DEBUG: unicode(curses.tparm(fg_color, 4),  # Blue
-                                       "ascii"),
-                logging.INFO: unicode(curses.tparm(fg_color, 2),  # Green
-                                      "ascii"),
-                logging.WARNING: unicode(curses.tparm(fg_color, 3),  # Yellow
-                                         "ascii"),
-                logging.ERROR: unicode(curses.tparm(fg_color, 1),  # Red
-                                       "ascii"),
+                logging.DEBUG:
+                str(
+                    curses.tparm(fg_color, 4),  # Blue
+                    'ascii'),
+                logging.INFO:
+                str(
+                    curses.tparm(fg_color, 2),  # Green
+                    'ascii'),
+                logging.WARNING:
+                str(
+                    curses.tparm(fg_color, 3),  # Yellow
+                    'ascii'),
+                logging.ERROR:
+                str(
+                    curses.tparm(fg_color, 1),  # Red
+                    'ascii'),
             }
-            self._normal = unicode(curses.tigetstr("sgr0"), "ascii")
+            self._normal = str(curses.tigetstr('sgr0'), 'ascii')
 
     def format(self, record):
         try:
             record.message = record.getMessage()
         except Exception as e:
-            record.message = "Bad message (%r): %r" % (e, record.__dict__)
-        record.asctime = time.strftime(
-            "%y%m%d %H:%M:%S", self.converter(record.created))
+            record.message = 'Bad message (%r): %r' % (e, record.__dict__)
+        record.asctime = time.strftime('%y%m%d %H:%M:%S',
+                                       self.converter(record.created))
         prefix = '[%(levelname)1.1s %(asctime)s %(module)s:%(lineno)d]' % \
             record.__dict__
         if self._color:
-            prefix = (self._colors.get(record.levelno, self._normal) +
-                      prefix + self._normal)
-        formatted = prefix + " " + record.message
+            prefix = (self._colors.get(record.levelno, self._normal) + prefix +
+                      self._normal)
+        formatted = prefix + ' ' + record.message
         if record.exc_info:
             if not record.exc_text:
                 record.exc_text = self.formatException(record.exc_info)
         if record.exc_text:
-            formatted = formatted.rstrip() + "\n" + record.exc_text
-        return formatted.replace("\n", "\n    ")
+            formatted = formatted.rstrip() + '\n' + record.exc_text
+        return formatted.replace('\n', '\n    ')
 
 
 #: settings for blog user
@@ -114,7 +121,6 @@ settings.reader = {}
 settings.writer = {}
 settings.theme = {}
 
-
 #: settings for liquidluck
 g = _Options()
 g.interrupt = False
@@ -123,9 +129,7 @@ g.source_directory = 'source'
 g.output_directory = 'deploy'
 g.static_directory = 'static'
 g.theme_gallery = os.path.expanduser('~/.liquidluck-themes')
-g.theme_directory = os.path.join(
-    g.liquid_directory, '_themes', 'default'
-)
+g.theme_directory = os.path.join(g.liquid_directory, '_themes', 'default')
 g.resource = {}
 g.public_posts = []
 g.secure_posts = []
