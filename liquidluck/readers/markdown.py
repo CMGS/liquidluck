@@ -31,7 +31,7 @@ Syntax::
 
 import re
 import logging
-import hoedown as m
+import misaka as m
 
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
@@ -46,25 +46,24 @@ class MarkdownReader(BaseReader):
     SUPPORT_TYPE = ['md', 'mkd', 'markdown']
 
     def render(self):
-        f = open(self.filepath)
-        logging.debug('read ' + self.relative_filepath)
+        with open(self.filepath) as f:
+            logging.debug('read ' + self.relative_filepath)
 
-        header = ''
-        body = ''
-        recording = True
-        for line in f:
-            if recording and line.startswith('---'):
-                recording = False
-            elif recording:
-                header += line
-            else:
-                body += line
+            header = ''
+            body = ''
+            recording = True
+            for line in f:
+                if recording and line.startswith('---'):
+                    recording = False
+                elif recording:
+                    header += line
+                else:
+                    body += line
 
-        f.close()
-        body = to_unicode(body)
-        meta = self._parse_meta(header, body)
-        content = self._parse_content(body)
-        return self.post_class(self.filepath, content, meta=meta)
+            body = to_unicode(body)
+            meta = self._parse_meta(header, body)
+            content = self._parse_content(body)
+            return self.post_class(self.filepath, content, meta=meta)
 
     def _parse_content(self, body):
         return markdown(body)
@@ -93,11 +92,11 @@ class MarkdownReader(BaseReader):
         #: keep body in meta data as source text
         meta['source_text'] = body
         _toc = m.Markdown(m.HtmlTocRenderer(), 0)
-        meta['toc'] = _toc.render(body)
+        meta['toc'] = _toc(body)
         return meta
 
 
-class LiquidRender(m.HtmlRenderer, m.SmartyPants):
+class LiquidRender(m.HtmlRenderer):
     def paragraph(self, text):
         text = cjk_nowrap(text)
         return '<p>%s</p>\n' % text
@@ -165,7 +164,7 @@ def markdown(text):
     regex = re.compile(r'^`````(\w+)', re.M)
     text = regex.sub(r'`````\1-', text)
 
-    render = LiquidRender(flags=m.HTML_USE_XHTML | m.HTML_TOC)
+    render = LiquidRender(flags=m.HTML_USE_XHTML, nesting_level=6)
     md = m.Markdown(
         render,
         extensions=(
@@ -173,7 +172,7 @@ def markdown(text):
             m.EXT_NO_INTRA_EMPHASIS | m.EXT_STRIKETHROUGH
         ),
     )
-    return md.render(text)
+    return m.smartypants(md(text))
 
 
 _XHTML_ESCAPE_RE = re.compile('[&<>"]')

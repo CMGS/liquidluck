@@ -82,10 +82,8 @@ def _read(abspath):
     if not os.path.exists(filepath):
         return None
 
-    f = open(filepath)
-    content = f.read()
-    f.close()
-    return content
+    with open(filepath, 'rb') as f:
+        return f.read()
 
 
 def wsgi_app(environ, start_response):
@@ -263,12 +261,15 @@ class IndexHandler(RequestHandler):
             self.write(body or 'Not Found')
             return
         ua = self.request.headers.get("User-Agent", 'bot').lower()
-        if 'msie' not in ua:
-            body = body.replace(
-                '</head>', '<script src="/livereload.js"></script></head>'
-            )
-        # disable google analytics
-        body = body.replace('google-analytics.com/ga.js', '')
+        try:
+            if 'msie' not in ua:
+                body = body.replace(
+                    '</head>', '<script src="/livereload.js"></script></head>'
+                )
+            # disable google analytics
+            body = body.replace('google-analytics.com/ga.js', '')
+        except Exception as e:
+            pass
         self.write(body)
 
 

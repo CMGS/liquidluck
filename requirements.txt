@@ -1,6 +1,11 @@
+cffi
+docopt
 docutils
 Jinja2
-Pygments
+-e git+git@github.com:CMGS/liquidluck.git#egg=liquidluck
+MarkupSafe
 misaka
-docopt
+pycparser
+Pygments
 PyYAML
+tornado
