@@ -12,7 +12,7 @@ import logging
 import os
 import re
 
-from jinja2 import Environment, FileSystemLoader, contextfilter
+from jinja2 import Environment, FileSystemLoader, pass_context
 
 import liquidluck
 from liquidluck.filters import (content_url, feed_updated, static_url, tag_url,
@@ -290,7 +290,7 @@ def get_post_destination(post, slug_format):
     return slug.rstrip('/') + '.html'
 
 
-@contextfilter
+@pass_context
 def permalink(ctx, post, prepend_site=False):
     writer = ctx.get('writer')
     slug = get_post_slug(post, settings.config['permalink'])

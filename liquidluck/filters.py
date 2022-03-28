@@ -7,7 +7,7 @@ import logging
 import os
 import re
 
-from jinja2 import contextfilter, contextfunction
+from jinja2 import pass_context
 
 from liquidluck.options import g, settings
 from liquidluck.utils import get_relative_base, to_bytes, to_unicode
@@ -32,7 +32,7 @@ def feed_updated(feed):
     return xmldatetime(latest)
 
 
-@contextfunction
+@pass_context
 def content_url(ctx, base, *args):
     writer = ctx.get('writer')
 
@@ -87,7 +87,7 @@ def content_url(ctx, base, *args):
     return url
 
 
-@contextfilter
+@pass_context
 def tag_url(ctx, tag, prepend_site=False):
     prefix = settings.site.get('prefix', '')
     url = settings.site.get('url')
@@ -106,7 +106,7 @@ def tag_url(ctx, tag, prepend_site=False):
     return content_url(ctx, prefix, 'tag', tag, 'index.html')
 
 
-@contextfilter
+@pass_context
 def year_url(ctx, post):
     prefix = settings.site.get('prefix', '')
     return content_url(ctx, prefix, post.date.year, 'index.html')
@@ -115,7 +115,7 @@ def year_url(ctx, post):
 _Post = {}
 
 
-@contextfilter
+@pass_context
 def wiki_link(ctx, content):
     global _Post
     from liquidluck.writers.base import permalink
@@ -161,7 +161,7 @@ def static_url(base):
             _Cache[path] = hsh
             return hsh
 
-    @contextfunction
+    @pass_context
     def create_url(ctx, path):
         hsh = get_hsh(path)[:5]
         prefix = settings.config.get('static_prefix', '/static/').rstrip('/')
