@@ -9,3 +9,4 @@ pycparser
 Pygments
 PyYAML
 tornado
+shibuya
